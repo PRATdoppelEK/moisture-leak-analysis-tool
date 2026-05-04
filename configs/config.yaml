@@ -1,0 +1,48 @@
+# Moisture Leak Analysis Tool — Configuration
+
+detection:
+  window_size_minutes: 10       # rolling window for rate-of-change calculation
+  min_event_duration_minutes: 5 # minimum duration to classify as a leak event
+  condensation_margin_c: 2.0    # degrees above dew point before condensation risk
+
+thresholds:
+  stator_winding:
+    low: 60
+    moderate: 70
+    high: 80
+    critical: 90
+  rotor_bearing:
+    low: 58
+    moderate: 68
+    high: 78
+    critical: 88
+  housing_seal:
+    low: 62
+    moderate: 72
+    high: 82
+    critical: 92
+  connector_port:
+    low: 55
+    moderate: 65
+    high: 75
+    critical: 85
+  cooling_channel:
+    low: 65
+    moderate: 75
+    high: 85
+    critical: 95
+  terminal_box:
+    low: 60
+    moderate: 70
+    high: 80
+    critical: 90
+
+insulation:
+  normal_kohm: 500
+  low_kohm: 200
+  critical_kohm: 10
+
+reporting:
+  output_format: "json"
+  save_plots: true
+  plot_dpi: 150
