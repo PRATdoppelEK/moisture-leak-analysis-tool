@@ -105,7 +105,7 @@ timestamp,humidity_rh,temperature_c,pressure_bar,insulation_kohm
 - **Physics-based dew point calculation** (Magnus formula) is used to separate condensation from leaks instead of a plain humidity threshold (no condensation event occurred in this demo run)
 - **Multi-sensor fusion** (4 signals weighted by severity impact) is more robust than single-sensor approaches — insulation resistance alone misses early-stage seal wear events
 - **Zone-specific thresholds** prevent over-alarming in high-humidity environments (e.g. cooling channels naturally run at higher RH than stator windings)
-- **Confidence scoring** (0–100%) is designed to let maintenance teams prioritise inspections. Known issue: in the demo run both events scored 15% confidence, including the CRITICAL one — calibration needs fixing
+- **Confidence scoring** (0–100%) is taken at the worst point of each event, so maintenance teams can prioritise inspections (demo: CRITICAL event 100%, moderate event 60%)
 - Approach based on diagnostic work at **EVO GmbH, München**; this public version is validated on synthetic data only
 
 
@@ -123,11 +123,11 @@ timestamp,humidity_rh,temperature_c,pressure_bar,insulation_kohm
   Overall Risk   : CRITICAL
   Total Events   : 2  (Critical: 1)
 
-  [1] MODERATE   | 14:00 – 16:00 | Peak RH=85.5% | Ins=166kΩ | Conf=15%
+  [1] MODERATE   | 14:00 – 16:00 | Peak RH=85.5% | Ins=166kΩ | Conf=60%
       Root cause : Gradual seal wear — slow moisture permeation through aged gasket
       Action     : ACTION REQUIRED — Schedule inspection within 1 week...
 
-  [2] CRITICAL   | 06:00 – 09:00 | Peak RH=98.7% | Ins=5kΩ   | Conf=15%
+  [2] CRITICAL   | 06:00 – 09:00 | Peak RH=98.7% | Ins=5kΩ   | Conf=100%
       Root cause : Insulation degradation — likely long-term moisture exposure or contamination
       Action     : IMMEDIATE SHUTDOWN...
 ```
