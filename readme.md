@@ -2,7 +2,12 @@
 
 > Python diagnostic tool for detecting, classifying, and localizing moisture ingress in motor components. Analyzes multi-sensor time series (humidity, temperature, insulation resistance, pressure) to identify leak events, diagnose root causes, and generate actionable maintenance reports.
 
-Developed during technical work at **EVO GmbH**, Munich.
+Re-implementation of a moisture-analysis approach I worked on at **EVO GmbH**, Munich.
+The original project and its data are confidential, so this public version runs on synthetic sensor data.
+
+---
+
+> **📌 About this repo:** This is a showcase repo — write-up, architecture, and results only. The full implementation lives in a private core repo (kept private to protect the code and as a backup) and is available for a live walkthrough on request, e.g. in an interview.
 
 ---
 
@@ -89,19 +94,19 @@ timestamp,humidity_rh,temperature_c,pressure_bar,insulation_kohm
 
 | Metric | Value |
 |--------|-------|
-| Leak events detected | 2 / 2 (100% recall on injected events) |
-| False positive rate | 0 (no spurious alarms on normal operation data) |
+| Leak events detected | 2 / 2 injected events |
+| False alarms | 0 in this 48 h run |
 | Detection latency | < 2 minutes from leak onset to alarm |
-| Root cause classification | Correctly distinguishes seal failure vs condensation vs gradual wear |
+| Root cause labels | Rule-based: seal failure, gradual wear, insulation degradation, condensation |
 | Report generation time | < 1 second per 48h dataset |
 
 ### Key observations
 
-- **Physics-based dew point calculation** (Magnus formula) significantly reduces false positives compared to simple humidity threshold alarms — condensation events correctly classified rather than flagged as leaks
+- **Physics-based dew point calculation** (Magnus formula) is used to separate condensation from leaks instead of a plain humidity threshold (no condensation event occurred in this demo run)
 - **Multi-sensor fusion** (4 signals weighted by severity impact) is more robust than single-sensor approaches — insulation resistance alone misses early-stage seal wear events
 - **Zone-specific thresholds** prevent over-alarming in high-humidity environments (e.g. cooling channels naturally run at higher RH than stator windings)
-- **Confidence scoring** (0–100%) allows maintenance teams to prioritise inspections — critical events (confidence > 90%) trigger immediate action, moderate events (50–75%) are scheduled
-- Tool developed and validated during technical work at **EVO GmbH, München** on real motor component diagnostic workflows
+- **Confidence scoring** (0–100%) is designed to let maintenance teams prioritise inspections. Known issue: in the demo run both events scored 15% confidence, including the CRITICAL one — calibration needs fixing
+- Approach based on diagnostic work at **EVO GmbH, München**; this public version is validated on synthetic data only
 
 
 ### Supported Component Zones
@@ -118,12 +123,12 @@ timestamp,humidity_rh,temperature_c,pressure_bar,insulation_kohm
   Overall Risk   : CRITICAL
   Total Events   : 2  (Critical: 1)
 
-  [1] MODERATE   | 14:00 – 16:00 | Peak RH=80.3% | Ins=215kΩ | Conf=75%
-      Root cause : Gradual seal wear — slow moisture permeation
-      Action     : Schedule inspection within 1 week...
+  [1] MODERATE   | 14:00 – 16:00 | Peak RH=85.5% | Ins=166kΩ | Conf=15%
+      Root cause : Gradual seal wear — slow moisture permeation through aged gasket
+      Action     : ACTION REQUIRED — Schedule inspection within 1 week...
 
-  [2] CRITICAL   | 06:00 – 09:00 | Peak RH=98.7% | Ins=5kΩ   | Conf=100%
-      Root cause : Sudden seal failure — rapid moisture ingress
+  [2] CRITICAL   | 06:00 – 09:00 | Peak RH=98.7% | Ins=5kΩ   | Conf=15%
+      Root cause : Insulation degradation — likely long-term moisture exposure or contamination
       Action     : IMMEDIATE SHUTDOWN...
 ```
 
